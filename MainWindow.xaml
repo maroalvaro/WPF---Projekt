@@ -1,0 +1,1514 @@
+﻿<Window x:Class="WPF___Projekt.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF___Projekt"
+        
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="1250"
+        Loaded="Window_Loaded"
+        AllowsTransparency="True"
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        Background="#272B2F">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Styles/Button.xaml" />
+                <ResourceDictionary Source="Styles/Image.xaml" />
+                <ResourceDictionary Source="Styles/Dock.xaml" />
+                <ResourceDictionary Source="Styles/Page.xaml" />
+                <ResourceDictionary Source="Styles/Text.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <DockPanel>
+        <Grid DockPanel.Dock="Top">
+
+            <TextBlock DockPanel.Dock="Top" Text="{Binding ElementName=tabControl, Path=SelectedItem.Tag}"
+                   Padding="10 5" Background="DarkGreen" Foreground="White" TextWrapping="Wrap"/>
+        </Grid>
+        <Grid DockPanel.Dock="Top">
+            <TabControl TabStripPlacement="Left" Name="tabControl" SelectionChanged="tabControl_SelectionChanged">
+                <TabControl.Resources>
+                    <Style TargetType="TabControl">
+                        <Setter Property="BorderThickness" Value="0" />
+                        <Setter Property="Padding" Value="0" />
+                    </Style>
+                </TabControl.Resources>
+
+                <!--ORDER-->
+                <TabItem  Header="Zamówienia"  Tag="Tutaj możesz dodawać nowe zamówienia" Style="{StaticResource TabItem}" >
+                    <Grid Background ="#333333">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="4*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Column="0" Grid.Row="0" Margin="20">
+                            <ListBox Name="listOfOrders" SelectionMode="Single" GotFocus="OrderGotFocus" DisplayMemberPath="NameAndPrice" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </Grid>
+
+                        <Grid DataContext="{Binding ElementName=listOfOrders, Path=SelectedItem}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Center"   VerticalAlignment="Center" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--PODSTAWOWE-->
+                                <Label Name="Order_NameSurname" Grid.Column="0" Grid.Row="0" Content="Nazwa przesyłki" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="Order_txtNameSurname" Text="{Binding Path=NameSurname}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="3"/>
+                                <Button Name="Order_btnNameSurname" Grid.Column="2" Grid.Row="0" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Order_CourierID" Grid.Column="0" Grid.Row="1" Content="Kurier" VerticalAlignment="Center" Margin="3"/>
+                                <ComboBox Name="Order_txtCourierID" Text="{Binding Path=CourierID}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="3"/>
+                                <Button Name="Order_btnCourierID" Grid.Column="2" Grid.Row="1" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Order_ClientID" Grid.Column="0" Grid.Row="2" Content="Klient" VerticalAlignment="Center" Margin="3"/>
+                                <ComboBox Name="Order_txtClientID" Text="{Binding Path=ClientID}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Margin="3" SelectionChanged="Order_clientChange"/>
+                                <Button Name="Order_btnClientID" Grid.Column="2" Grid.Row="2" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Order_Payment" Content="Wpłata" Grid.Column="0" Grid.Row="3"  VerticalAlignment="Center" Margin="3"/>
+                                <ScrollBar Name="Order_scrollbarPayment" Value="{Binding Path=Payment}" Grid.Column="1" Grid.Row="3" Orientation="Horizontal" ValueChanged="Order_scrollbarPayment_ValueChanged" />
+                                <TextBox Name="Order_txtPayment" Grid.Column="2" Grid.Row="3"  VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Order_ArriveWhen" Content="Realizacja"  Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                <ComboBox Name="Order_cmbArriveWhen" SelectedIndex="{Binding Path=PackageStatus}" Grid.Column="1" Grid.Row="4"
+                                      VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,7,4,6.667">
+                                    <ComboBoxItem Name="arr1" Content="Nie śpiesz się" Margin="3"/>
+                                    <ComboBoxItem Name="arr2" Content="Standard" Margin="3"/>
+                                    <ComboBoxItem Name="arr3" Content="Ekspres" Margin="3"/>
+                                </ComboBox>
+
+                                <Label Name="Order_PackageStatus" Content="Status paczki"  Grid.Column="0" Grid.Row="5" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                <ComboBox Name="Order_cmbPackageStatus" SelectedIndex="{Binding Path=PackageStatus}" Grid.Column="1" Grid.Row="5" 
+                                      VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,7,4,6.667" Background="DarkBlue">
+                                    <ComboBoxItem Name="status1" Content="Oczekująca" Margin="3"/>
+                                    <ComboBoxItem Name="status2" Content="Opłacona" Margin="3"/>
+                                    <ComboBoxItem Name="status3" Content="W drodze" Margin="3"/>
+                                    <ComboBoxItem Name="status4" Content="Dostarczona" Margin="3"/>
+                                </ComboBox>
+
+                                <GroupBox Name="Order_Format" Header="Adres" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="2" Margin="3">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Name="Order_Street" Content="Miasto" Grid.Column="0" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+                                        <Label Name="Order_City" Content="Ulica" Grid.Row="1" Grid.Column="0" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+                                        <Label Name="Order_Code" Content="Kod" Grid.Column="2" Grid.Row="2" Margin="3,0,4,0" VerticalAlignment="Center" Height="26"/>
+                                        <Label Name="Order_Phone" Content="Telefon" Grid.Column="4" Grid.Row="2" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+
+                                        <TextBox Name="Order_txtCity" Text="{Binding Path=City}" Grid.Column="2" Margin="3,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="10"/>
+                                        <TextBox Name="Order_txtStreet" Text="{Binding Path=Street}" Grid.Column="2" Grid.Row="1" Margin="3,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="10"/>
+                                        <TextBox Name="Order_txtCode" Text="{Binding Path=Code}" Grid.Column="3" Grid.Row="2" Margin="0,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="1"/>
+                                        <TextBox Name="Order_txtPhone"  Text="{Binding Path=Phone}" Grid.Column="5" Grid.Row="2" Margin="0,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="2"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Dodatkowe uwagi:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"  Height="28" Margin="3,0,3,0"/>
+                                <Button Name ="btnOrderSummary" Content="Sprawdź" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" IsDefault="True"  Margin="3,0,3,0" Click="Order_btnSummary_Click"/>
+                            </Grid>
+
+
+                            <TextBox Name="txtOrderSummary" Text="{Binding Path=Description}" Grid.Column="0" Grid.Row="4" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Margin="10,5,3,3"/>
+
+                            <StackPanel Grid.Row="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Button Name="btnOrderOk" Content="Dodaj nową osobę" Padding="20,3" Margin="3" IsDefault="True" Click="Order_btnOkay_Click"/>
+                                <Button Name="btnOrderCancel" Content="Anuluj" Padding="20,3" Margin="3" IsCancel="True" Click="Order_btnCancel_Click"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="450"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" />
+
+                            <Border Grid.Column="1" Grid.Row="1"  Background="#272B2F" Margin="0,40,0,0" >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="99"/>
+                                        <ColumnDefinition Width="59"/>
+                                        <ColumnDefinition Width="4"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--// ADD //-->
+
+                                    <Button Grid.Column="1"
+                                x:Name="AddOrderButton"
+                                Style="{StaticResource DockBtnStyle}" Click="AddOrderClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/add.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=AddOrderButton}"
+                                   IsOpen="{Binding ElementName=AddOrderButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}" >
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Add"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+                                    <!--// Edit //-->
+
+                                    <Button Grid.Column="2"
+                                x:Name="EditOrderButton"
+                                Style="{StaticResource DockBtnStyle}" Click="EditOrderClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/edit.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=EditOrderButton}"
+                                   IsOpen="{Binding ElementName=EditOrderButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Edit"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Delete //-->
+
+                                    <Button Grid.Column="3"
+                                x:Name="DeleteOrderButton"
+                                Style="{StaticResource DockBtnStyle}" Click="DeleteOrderClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/delete.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=DeleteOrderButton}"
+                                   IsOpen="{Binding ElementName=DeleteOrderButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Delete"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Preview //-->
+
+                                    <Button Grid.Column="4"
+                                x:Name="ViewOrderButton"
+                                Style="{StaticResource DockBtnStyle}" Click="ViewOrderClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/preview.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=ViewOrderButton}"
+                                   IsOpen="{Binding ElementName=ViewOrderButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Preview"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Print //-->
+
+                                    <Button Grid.Column="5"
+                                x:Name="PrintOrderButton"
+                                Style="{StaticResource DockBtnStyle}" Click="PrintOrderClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/print.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=PrintOrderButton}"
+                                   IsOpen="{Binding ElementName=PrintOrderButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Print"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Map //-->
+
+                                    <Button Grid.Column="6"
+                                x:Name="MapOrderButton"
+                                Style="{StaticResource DockBtnStyle}" Click="MapOrderClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/map.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=MapOrderButton}"
+                                   IsOpen="{Binding ElementName=MapOrderButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Map"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" CornerRadius="0,0,0,0"/>
+                        </Grid>
+
+                        <Button x:Name="CloseApp"
+                Style="{StaticResource ExitApp}"
+                Click="CloseApp_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Grid.Column="1"/>
+
+                    </Grid>
+
+                </TabItem>
+
+                <!--COURIER-->
+                <TabItem Header="Kurierzy" Tag="Tutaj możesz dodawać nowych kurierów" Style="{StaticResource TabItem}">
+                    <Grid Background ="#333333">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="4*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+
+                        <Grid Grid.Column="0" Grid.Row="0" Margin="20">
+                            <ListBox Name="listOfCouriers" SelectionMode="Single" GotFocus="CourierGotFocus" DisplayMemberPath="NameAndPrice"/>
+                        </Grid>
+
+
+                        <Grid DataContext="{Binding ElementName=listOfCouriers, Path=SelectedItem}" Grid.Column="1" HorizontalAlignment="Center"   VerticalAlignment="Center" Height="460" Width="580" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="5*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!--PODSTAWOWE-->
+                                <Label Name="Courier_NameSurname" Grid.Column="0" Grid.Row="0" Content="Imię i Nazwisko" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="Courier_txtNameSurname" Text="{Binding Path=NameSurname}" Grid.Column="1" VerticalAlignment="Center" Margin="3,0,48,0" TextChanged="Courier_txtData_TextChanged" Grid.ColumnSpan="2"/>
+                                <Button Name="Courier_btnNameSurname" Grid.Column="2" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="73,0,3,0"/>
+
+                                <Label Name="Courier_Email" Grid.Column="0" Grid.Row="1" Content="Email" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="Courier_txtEmail" Text="{Binding Path=Email}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="3" TextChanged="Courier_txtPhone_Changed"/>
+                                <Button Name="Courier_btnEmail" Grid.Column="2" Grid.Row="1" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="73,0,3,0"/>
+
+                                <Label Name="Courier_Phone" Grid.Column="0" Grid.Row="2" Content="Telefon" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="Courier_txtPhone" Text="{Binding Path=Phone}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Margin="3"/>
+                                <Button Name="Courier_btnPhone" Grid.Column="2" Grid.Row="2" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="73,0,3,0"/>
+                            </Grid>
+
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Dodatkowe informacje:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"  Height="28" Margin="3,0,3,0"/>
+                                <Button Name ="btnCourierSummary" Content="Sprawdź" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" IsDefault="True"  Margin="3,0,3,0" Click="Courier_btnSummary_Click"/>
+                            </Grid>
+
+
+                            <TextBox Name="txtCourierSummary" Text="{Binding Path=Description}" Grid.Column="0" Grid.Row="4" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Margin="10,5,3,3"/>
+
+                            <StackPanel Grid.Row="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Button Name="btnCourierOk" Content="Dodaj nową osobę" Padding="20,3" Margin="3" IsDefault="True" Click="Courier_btnOkay_Click"/>
+                                <Button Name="btnCourierCancel" Content="Anuluj" Padding="20,3" Margin="3" IsCancel="True" Click="Courier_btnCancel_Click"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="450"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" />
+
+                            <Border Grid.Column="1" Grid.Row="1"  Background="#272B2F" Margin="0,40,0,0" >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="99"/>
+                                        <ColumnDefinition Width="59"/>
+                                        <ColumnDefinition Width="4"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--// ADD //-->
+
+                                    <Button Grid.Column="1"
+                                x:Name="AddCourierButton"
+                                Style="{StaticResource DockBtnStyle}" Click="AddCourierClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/add.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=AddCourierButton}"
+                                   IsOpen="{Binding ElementName=AddCourierButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}" >
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Add"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+                                    <!--// Edit //-->
+
+                                    <Button Grid.Column="2"
+                                x:Name="EditCourierButton"
+                                Style="{StaticResource DockBtnStyle}" Click="EditCourierClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/edit.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=EditCourierButton}"
+                                   IsOpen="{Binding ElementName=EditCourierButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Edit"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Delete //-->
+
+                                    <Button Grid.Column="3"
+                                x:Name="DeleteCourierButton"
+                                Style="{StaticResource DockBtnStyle}" Click="DeleteCourierClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/delete.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=DeleteCourierButton}"
+                                   IsOpen="{Binding ElementName=DeleteCourierButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Delete"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Preview //-->
+
+                                    <Button Grid.Column="4"
+                                x:Name="ViewCourierButton"
+                                Style="{StaticResource DockBtnStyle}" Click="ViewCourierClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/preview.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=ViewCourierButton}"
+                                   IsOpen="{Binding ElementName=ViewCourierButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Preview"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Print //-->
+
+                                    <Button Grid.Column="5"
+                                x:Name="PrintCourierButton"
+                                Style="{StaticResource DockBtnStyle}" Click="PrintCourierClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/print.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=PrintCourierButton}"
+                                   IsOpen="{Binding ElementName=PrintCourierButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Print"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Map //-->
+
+                                    <Button Grid.Column="6"
+                                x:Name="MapCourierButton"
+                                Style="{StaticResource DockBtnStyle}" Click="MapClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/map.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=MapCourierButton}"
+                                   IsOpen="{Binding ElementName=MapCourierButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Map"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" CornerRadius="0,0,0,0"/>
+                        </Grid>
+
+                        <Button
+                Style="{StaticResource ExitApp}"
+                Click="CloseApp_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Grid.Column="1"/>
+
+                        <Button
+                Style="{StaticResource ExitApp}"
+                Click="CloseApp_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Grid.Column="1"/>
+                    </Grid>
+                </TabItem>
+
+
+                <!--CLIENT-->
+                <TabItem Header="Klienci" Tag="Tutaj możesz dodawać nowych klientów" Style="{StaticResource TabItem}">
+                    <Grid Background ="#333333">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="4*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Column="0" Grid.Row="0" Margin="20">
+                            <ListBox Name="listOfClients" SelectionMode="Single" GotFocus="ClientGotFocus" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" DisplayMemberPath="NameAndPrice"/>
+                        </Grid>
+                        <Grid DataContext="{Binding ElementName=listOfClients, Path=SelectedItem}" HorizontalAlignment="Left" Height="487" VerticalAlignment="Center" Width="586" Grid.Column="1" Grid.Row="0" Margin="100,0,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Name="Client_NameSurname" Grid.Column="0" Grid.Row="0" Content="Imię i Nazwisko" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="Client_txtNameSurname" Text="{Binding Path=NameSurname}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="3" TextChanged="Client_txtNameSurname_TextChanged"/>
+                                <Button Name="Client_btnNameSurname" Grid.Column="2" Grid.Row="0" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Client_Gender" Content="Płeć"  Grid.Column="0" Grid.Row="2" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                <ComboBox Name="Client_cmbGender" SelectedIndex="{Binding Path=Gender}" Grid.Column="1" Grid.Row="2" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,7,4,6.667">
+                                    <ComboBoxItem Name="Client_male" Content="Mężczyzna" Margin="3"/>
+                                    <ComboBoxItem Name="Client_female" Content="Kobieta" Margin="3"/>
+                                    <ComboBoxItem Name="Client_unknown" Content="Nieznane" Margin="3"/>
+                                </ComboBox>
+
+                                <Label Name="Client_Date" Content="Data urodzenia" Grid.Column="0" Grid.Row="3"  VerticalAlignment="Center" Margin="3"/>
+                                <DatePicker Name="Client_datepick" SelectedDateChanged="dateChangeHandler" SelectedDate="{Binding Path=DATEDateOfBirth}" 
+                                        Grid.Column="1" Grid.Row="3" Margin="5,5,5,5" Grid.ColumnSpan="2"/>
+
+
+                                <Label Name="Client_Province" Content="Województwo"  Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                <ComboBox Name="Client_cmbProvince" SelectedIndex="{Binding Path=Province}" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,7,4,6.667">
+                                    <ComboBoxItem Name="cmbClient1" Content="Podlaskie"/>
+                                    <ComboBoxItem Name="cmbClient2" Content="Dolnośląskie"/>
+                                    <ComboBoxItem Name="cmbClient3" Content="Kujawsko-pomorskie"/>
+                                    <ComboBoxItem Name="cmbClient4" Content="Lubelskie"/>
+                                    <ComboBoxItem Name="cmbClient5" Content="Lubuskie"/>
+                                    <ComboBoxItem Name="cmbClient6" Content="Łódzkie"/>
+                                    <ComboBoxItem Name="cmbClient7" Content="Mazowieckie"/>
+                                    <ComboBoxItem Name="cmbClient8" Content="Małopolskie"/>
+                                    <ComboBoxItem Name="cmbClient9" Content="Opolskie"/>
+                                    <ComboBoxItem Name="cmbClient10" Content="Podkarpackie"/>
+                                    <ComboBoxItem Name="cmbClient11" Content="Pomorskie"/>
+                                    <ComboBoxItem Name="cmbClient12" Content="Śląskie"/>
+                                    <ComboBoxItem Name="cmbClient13" Content="Świętokrzyskie"/>
+                                    <ComboBoxItem Name="cmbClient14" Content="Warmińsko-mazurskie"/>
+                                    <ComboBoxItem Name="cmbClient15" Content="Wielkopolskie"/>
+                                    <ComboBoxItem Name="cmbClient16" Content="Zachodnio-pomorskie"/>
+                                </ComboBox>
+
+                                <Label Name="Client_Email" Grid.Column="0" Grid.Row="5" Content="Email" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="Client_txtEmail" Text="{Binding Path=Email}" Grid.Column="1" Grid.Row="5" VerticalAlignment="Center" Margin="3" TextChanged="emailChangeHandler"/>
+                                <Button Name="Client_btnEmail" Grid.Column="2" Grid.Row="5" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+
+                                <GroupBox Name="Client_Format" Header="Adres" Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="3" Margin="3">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Name="Client_Street" Content="Miasto" Grid.Column="0" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+                                        <Label Name="Client_City" Content="Ulica" Grid.Row="1" Grid.Column="0" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+                                        <Label Name="Client_Code" Content="Kod" Grid.Column="2" Grid.Row="2" Margin="3,0,4,0" VerticalAlignment="Center" Height="26"/>
+                                        <Label Name="Client_Phone" Content="Telefon" Grid.Column="4" Grid.Row="2" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+
+                                        <TextBox Name="Client_txtCity" Text="{Binding Path=City}" Grid.Column="2" Margin="3,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="10"/>
+                                        <TextBox Name="Client_txtStreet" Text="{Binding Path=Street}" Grid.Column="2" Grid.Row="1" Margin="3,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="10"/>
+                                        <TextBox Name="Client_txtCode" Text="{Binding Path=Code}" Grid.Column="3" Grid.Row="2" Margin="0,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="1"/>
+                                        <TextBox Name="Client_txtPhone"  Text="{Binding Path=Phone}" Grid.Column="5" Grid.Row="2" Margin="0,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="2"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                            </Grid>
+
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Dodatkowe informacje:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"  Height="28" Margin="3,0,3,0"/>
+                                <Button Name ="btnClientSummary" Content="Sprawdź" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" IsDefault="True"  Margin="3,0,3,0" Click="Client_btnSummary_Click"/>
+                            </Grid>
+
+
+                            <TextBox Name="txtClientSummary" Text="{Binding Path=Description}" Grid.Column="0" Grid.Row="4" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Margin="10,5,3,3"/>
+
+                            <StackPanel Grid.Row="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Button Name="btnClientOk" Content="Dodaj nową osobę" Padding="20,3" Margin="3" IsDefault="True" Click="Client_btnOkay_Click"/>
+                                <Button Name="btnClientCancel" Content="Anuluj" Padding="20,3" Margin="3" IsCancel="True" Click="Client_btnCancel_Click"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="450"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" />
+
+                            <Border Grid.Column="1" Grid.Row="1"  Background="#272B2F" Margin="0,40,0,0" >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="99"/>
+                                        <ColumnDefinition Width="59"/>
+                                        <ColumnDefinition Width="4"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--// ADD //-->
+
+                                    <Button Grid.Column="1"
+                                x:Name="AddClientButton"
+                                Style="{StaticResource DockBtnStyle}" Click="AddClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/add.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=AddClientButton}"
+                                   IsOpen="{Binding ElementName=AddClientButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}" >
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Add"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+                                    <!--// Edit //-->
+
+                                    <Button Grid.Column="2"
+                                x:Name="EditClientButton"
+                                Style="{StaticResource DockBtnStyle}" Click="EditClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/edit.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=EditClientButton}"
+                                   IsOpen="{Binding ElementName=EditClientButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Edit"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Delete //-->
+
+                                    <Button Grid.Column="3"
+                                x:Name="DeleteClientButton"
+                                Style="{StaticResource DockBtnStyle}" Click="DeleteClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/delete.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=DeleteClientButton}"
+                                   IsOpen="{Binding ElementName=DeleteClientButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Delete"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Preview //-->
+
+                                    <Button Grid.Column="4"
+                                x:Name="ViewClientButton"
+                                Style="{StaticResource DockBtnStyle}" Click="ViewClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/preview.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=ViewClientButton}"
+                                   IsOpen="{Binding ElementName=ViewClientButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Preview"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Print //-->
+
+                                    <Button Grid.Column="5"
+                                x:Name="PrintClientButton"
+                                Style="{StaticResource DockBtnStyle}" Click="PrintClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/print.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=PrintClientButton}"
+                                   IsOpen="{Binding ElementName=PrintClientButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Print"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Map //-->
+
+                                    <Button Grid.Column="6"
+                                x:Name="MapClientButton"
+                                Style="{StaticResource DockBtnStyle}" Click="MapClientClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/map.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=MapClientButton}"
+                                   IsOpen="{Binding ElementName=MapClientButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Map"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" CornerRadius="0,0,0,0"/>
+                        </Grid>
+
+                        <Button
+                Style="{StaticResource ExitApp}"
+                Click="CloseApp_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Grid.Column="1"/>
+                        
+                    </Grid>
+                </TabItem>
+
+                <!--TEMPLATE-->
+                <TabItem Header="Template" Tag="Podstawowa funkcjonalność."   Style="{StaticResource TabItem}">
+                    <Grid Background ="#333333">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="4*"/>
+                            <RowDefinition Height="1*"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid Grid.Column="0" Grid.Row="0" Margin="20">
+
+                            <ListBox SelectionMode="Single" Name="listOfItems" GotFocus="ClientGotFocus" DisplayMemberPath="NameAndPrice" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </Grid>
+
+
+                        <Grid DataContext="{Binding ElementName=listOfItems, Path=SelectedItem}" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left"   VerticalAlignment="Center">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Grid Grid.Row="0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <Label Name="NameSurname" Grid.Column="0" Grid.Row="0" Content="Imię i Nazwisko" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="txtNameSurname" Text="{Binding Path=NameSurname}" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="3" TextChanged="txtNameSurname_TextChanged"/>
+                                <Button Name="btnNameSurname" Grid.Column="2" Grid.Row="0" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Email" Grid.Column="0" Grid.Row="1" Content="Email" VerticalAlignment="Center" Margin="3"/>
+                                <TextBox Name="txtEmail" Text="{Binding Path=Email}" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="3"/>
+                                <Button Name="btnEmail" Grid.Column="2" Grid.Row="1" Content="..." VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+                                <Label Name="Date" Content="Data urodzenia" Grid.Column="0" Grid.Row="2"  VerticalAlignment="Center" Margin="3"/>
+                                <DatePicker Name="datepick" SelectedDate="{Binding Path=dateOfBirth}" Grid.Column="1" Grid.Row="2" Margin="5,5,5,5" Grid.ColumnSpan="2"/>
+
+                                <Label Name="Payment" Content="Wpłata" Grid.Column="0" Grid.Row="3"  VerticalAlignment="Center" Margin="3"/>
+                                <ScrollBar Name="scrollbarPayment" Value="{Binding Path=Payment}" Grid.Column="1" Grid.Row="3" Orientation="Horizontal" ValueChanged="scrollbarPayment_ValueChanged"/>
+                                <TextBox Name="txtPayment" Grid.Column="2" Grid.Row="3"  VerticalAlignment="Center" Padding="10,3" Margin="3"/>
+
+
+                                <Label Name="Province" Content="Województwo"  Grid.Column="0" Grid.Row="4" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                <ComboBox Name="cmbProvince" SelectedIndex="{Binding Path=Province}" Grid.Column="1" Grid.Row="4" VerticalAlignment="Center" Grid.ColumnSpan="2" Margin="2,7,4,6.667">
+                                    <ComboBoxItem Name="cmb1" Content="Podlasie"/>
+                                    <ComboBoxItem Name="cmb2" Content="Łódzkie"/>
+                                    <ComboBoxItem Name="cmb3" Content="Mazowieckie"/>
+                                    <ComboBoxItem Name="cmb4" Content="Małoposlkie"/>
+                                    <ComboBoxItem Name="cmb5" Content="Wielkopolskie"/>
+                                    <ComboBoxItem Name="cmb6" Content="Pomorskie"/>
+                                </ComboBox>
+
+
+                                <GroupBox Name="Format1" Header="Adres" Grid.Column="0" Grid.Row="5" Grid.ColumnSpan="3" Margin="3">
+                                    <Grid VerticalAlignment="Center">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="40"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="60"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <Label Name="Street" Content="Miasto" Grid.Column="0" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+                                        <Label Name="City" Content="Ulica" Grid.Row="1" Grid.Column="0" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+                                        <Label Name="Code" Content="Kod" Grid.Column="2" Grid.Row="2" Margin="3,0,4,0" VerticalAlignment="Center" Height="26"/>
+                                        <Label Name="Phone" Content="Telefon" Grid.Column="4" Grid.Row="2" Margin="3,0,3,0" VerticalAlignment="Center" Grid.ColumnSpan="2" Height="26"/>
+
+                                        <TextBox Name="txtCity" Text="{Binding Path=City}" Grid.Column="2" Margin="3,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="10"/>
+                                        <TextBox Name="txtStreet" Text="{Binding Path=Street}" Grid.Column="2" Grid.Row="1" Margin="3,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="10"/>
+                                        <TextBox Name="txtCode" Text="{Binding Path=Code}" Grid.Column="3" Grid.Row="2" Margin="0,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="1"/>
+                                        <TextBox Name="txtPhone"  Text="{Binding Path=Phone}" Grid.Column="5" Grid.Row="2" Margin="0,0,4,0" VerticalAlignment="Center" Height="18" Grid.ColumnSpan="2"/>
+                                    </Grid>
+                                </GroupBox>
+                            </Grid>
+
+
+
+                            <Grid Grid.Row="2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <GroupBox Name="Gender" Header="Płeć" Grid.Column="0">
+                                    <StackPanel VerticalAlignment="Center">
+                                        <RadioButton Name="male" Content="Mężczyzna" Margin="3"/>
+                                        <RadioButton Name="female" Content="Kobieta" Margin="3"/>
+                                        <RadioButton Name="unknown" Content="Nieznane" Margin="3"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <GroupBox Name="Adres" Header="Rodzaj wpłaty" Grid.Column="1">
+                                    <StackPanel VerticalAlignment="Top">
+                                        <CheckBox x:Name="Oplata" Content="Opłata ...?"  Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                        <CheckBox x:Name="Charytatywne" Content="Na cele charytatywne" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                        <CheckBox x:Name="Napiwek" Content="Napiwek" Grid.Column="2" Grid.Row="0" VerticalAlignment="Center" Margin="3,0,3,0"/>
+                                    </StackPanel>
+                                </GroupBox>
+
+                                <GroupBox Name="Termin_Realizacji" Header="Termin Realizacji" Grid.Column="2">
+                                    <StackPanel VerticalAlignment="Top">
+                                        <RadioButton Name="Standard" Content="Standard" Margin="3"/>
+                                        <RadioButton Name="Ekspres" Content="Ekspres" Margin="3"/>
+                                    </StackPanel>
+                                </GroupBox>
+                            </Grid>
+
+
+                            <Grid Grid.Row="3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Label Content="Dodatkowe uwagi:" Grid.Column="0" Grid.Row="2" VerticalAlignment="Center"  Height="28" Margin="3,0,3,0"/>
+                                <Button Name ="btnSummary" Content="Sprawdź" Grid.Column="2" Grid.Row="2" VerticalAlignment="Center" IsDefault="True"  Margin="3,0,3,0" Click="Client_btnSummary_Click"/>
+                            </Grid>
+
+
+                            <TextBox Name="txtSummary" Text="{Binding Path=Description}" Grid.Column="0" Grid.Row="4" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Visible" Margin="10,5,3,3"/>
+
+
+
+                            <StackPanel Grid.Row="5" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                <Button Name="btnOk" Content="Dodaj nową osobę" Padding="20,3" Margin="3" IsDefault="True" Click="Client_btnOkay_Click"/>
+                                <Button Name="btnCancel" Content="Anuluj" Padding="20,3" Margin="3" IsCancel="True" Click="Client_btnCancel_Click"/>
+                            </StackPanel>
+                        </Grid>
+
+
+                        <Grid DataContext="{Binding ElementName=listOfItems, Path=SelectedItem}" HorizontalAlignment="Left" Height="487" Margin="400,0,0,0" VerticalAlignment="Center" Width="350" Grid.Column="1" Grid.Row="0" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" SharedSizeGroup="etykiety2"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+                            <Label Margin="4" Grid.Row="0">Urodzony</Label>
+                            <Label Margin="4" Grid.Row="1">Płeć</Label>
+                            <Label Margin="4" Grid.Row="2">Rodzaj</Label>
+                            <Label Margin="4" Grid.Row="3">Realizacja</Label>
+                            <TextBox Margin="4" Grid.Row="0" Grid.Column="1" Text="{Binding Path=DateOfBirth}"/>
+                            <TextBox Margin="4" Grid.Row="1" Grid.Column="1" Text="{Binding Path=Gender}"/>
+                            <TextBox Margin="4" Grid.Row="2" Grid.Column="1" Text="{Binding Path=Type}"/>
+                            <TextBox Margin="4" Grid.Row="3" Grid.Column="1" Text="{Binding Path=Term}"/>
+                        </Grid>
+
+
+
+                        <Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="450"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border Grid.Column="0" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" />
+
+                            <Border Grid.Column="1" Grid.Row="1"  Background="#272B2F" Margin="0,40,0,0" >
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="20"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="99"/>
+                                        <ColumnDefinition Width="59"/>
+                                        <ColumnDefinition Width="4"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!--// ADD //-->
+
+                                    <Button Grid.Column="1"
+                                x:Name="AddButton"
+                                Style="{StaticResource DockBtnStyle}" Click="AddClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/add.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=AddButton}"
+                                   IsOpen="{Binding ElementName=AddButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}" >
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Add"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+                                    <!--// Edit //-->
+
+                                    <Button Grid.Column="2"
+                                x:Name="EditButton"
+                                Style="{StaticResource DockBtnStyle}" Click="EditClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/edit.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=EditButton}"
+                                   IsOpen="{Binding ElementName=EditButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Edit"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Delete //-->
+
+                                    <Button Grid.Column="3"
+                                x:Name="DeleteButton"
+                                Style="{StaticResource DockBtnStyle}" Click="DeleteClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/delete.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=DeleteButton}"
+                                   IsOpen="{Binding ElementName=DeleteButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Delete"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Preview //-->
+
+                                    <Button Grid.Column="4"
+                                x:Name="ViewButton"
+                                Style="{StaticResource DockBtnStyle}" Click="ViewClick">
+
+                                        <Button.Background>
+
+                                            <ImageBrush ImageSource="Icons/preview.png"
+                                            Stretch="Uniform" />
+
+                                        </Button.Background>
+
+                                        <Popup Width="60"
+                                   HorizontalOffset="8"
+                                   PlacementTarget="{Binding ElementName=ViewButton}"
+                                   IsOpen="{Binding ElementName=ViewButton, Path=IsMouseOver, Mode=OneWay}"
+                                   Style="{StaticResource PopupStyle}">
+
+                                            <Grid>
+
+                                                <Border Style="{StaticResource border}">
+
+                                                    <TextBlock Text="Preview"
+                                                   Style="{StaticResource PopupText}" />
+
+                                                </Border>
+
+                                                <Path Style="{StaticResource ArrowPath}" />
+
+                                            </Grid>
+
+                                        </Popup>
+
+                                    </Button>
+
+                                    <!--// Print //-->
+
+                                   
+
+                                    <!--// Map //-->
+
+                                   
+
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2" Grid.Row="1"  Background="#272B2F" Margin="-1,40,-1,0" CornerRadius="0,0,0,0"/>
+                        </Grid>
+
+                        <Button 
+                Style="{StaticResource ExitApp}"
+                Click="CloseApp_Click" HorizontalAlignment="Right" VerticalAlignment="Top"  Grid.Column="1"/>
+
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Grid>
+    </DockPanel>
+</Window>
