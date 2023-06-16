@@ -11,7 +11,7 @@
         <Setter Property="FontFamily"
                 Value="/Fonts/#Rubik" />
         <Setter Property="Foreground"
-                Value="#DBDBDB" />
+                Value="#959595" />
         <Setter Property="FontSize"
                 Value="13" />
     </Style>
